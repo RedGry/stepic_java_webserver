@@ -22,22 +22,21 @@ public class DBService {
         this.connection = getH2Connection();
     }
 
-    public UsersDataSet getUser(long id) throws DBException {
+    public UsersDataSet getUserByLogin(String login) throws DBException {
         try {
-            return (new UsersDAO(connection).get(id));
+            return (new UsersDAO(connection).getUserByLogin(login));
         } catch (SQLException e) {
             throw new DBException(e);
         }
     }
 
-    public long addUser(String name) throws DBException {
+    public void addUser(String login, String password) throws DBException {
         try {
             connection.setAutoCommit(false);
             UsersDAO dao = new UsersDAO(connection);
             dao.createTable();
-            dao.insertUser(name);
+            dao.insertUser(login, password);
             connection.commit();
-            return dao.getUserId(name);
         } catch (SQLException e) {
             try {
                 connection.rollback();
